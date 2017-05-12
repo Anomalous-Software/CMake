@@ -666,7 +666,7 @@ bool cmGlobalVisualStudio10Generator::FindVCTargetsPath(cmMakefile* mf)
       xw.Content("{F3FC6D86-508D-3FB1-96D2-995F08B142EC}");
      xw.EndElement(); // ProjectGuid
      xw.StartElement("Keyword");
-	 if (this->SystemIsAndroid) {
+	 if (this->TargetsAndroid()) {
 		 xw.Content("Android");
 	 }
 	 else {
@@ -691,12 +691,12 @@ bool cmGlobalVisualStudio10Generator::FindVCTargetsPath(cmMakefile* mf)
         xw.Content(this->GetSystemVersion());
        xw.EndElement(); // ApplicationTypeRevision
 	 }
-	 else if (this->SystemIsAndroid) {
+	 else if (this->TargetsAndroid()) {
 		 xw.StartElement("ApplicationType");
 		 xw.Content("Android");
 		 xw.EndElement(); // ApplicationType
 		 xw.StartElement("ApplicationTypeRevision");
-		 xw.Content("2.0");
+		 xw.Content("3.0");
 		 xw.EndElement(); // ApplicationTypeRevision
 	 }
      if (!this->WindowsTargetPlatformVersion.empty()) {

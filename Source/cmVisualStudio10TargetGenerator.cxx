@@ -3785,9 +3785,9 @@ void cmVisualStudio10TargetGenerator::WriteApplicationTypeSettings()
   if (isAndroid) {
     this->WriteString("<ApplicationType>Android"
     	"</ApplicationType>\n", 2);
-    this->WriteString("<ApplicationTypeRevision>2.0"
+    this->WriteString("<ApplicationTypeRevision>3.0"
     	"</ApplicationTypeRevision>\n", 2);
-    this->WriteString("<MinimumVisualStudioVersion>14.0"
+    this->WriteString("<MinimumVisualStudioVersion>15.0"
     	"</MinimumVisualStudioVersion>\n", 2);
   }
   else {
