@@ -326,13 +326,13 @@ bool cmGlobalVisualStudio10Generator::InitializeSystem(cmMakefile* mf)
       return false;
     }
   } else if (this->SystemName == "Android") {
-    if (this->DefaultPlatformName != "Win32") {
+   /* if (this->DefaultPlatformName != "Win32") {
       std::ostringstream e;
       e << "CMAKE_SYSTEM_NAME is 'Android' but CMAKE_GENERATOR "
         << "specifies a platform too: '" << this->GetName() << "'";
       mf->IssueMessage(cmake::FATAL_ERROR, e.str());
       return false;
-    }
+    }*/
 
 	if (this->DefaultPlatformName == "Tegra-Android") {
 		std::string v = this->GetInstalledNsightTegraVersion();
@@ -666,7 +666,12 @@ bool cmGlobalVisualStudio10Generator::FindVCTargetsPath(cmMakefile* mf)
       xw.Content("{F3FC6D86-508D-3FB1-96D2-995F08B142EC}");
      xw.EndElement(); // ProjectGuid
      xw.StartElement("Keyword");
-      xw.Content("Win32Proj");
+	 if (this->SystemIsAndroid) {
+		 xw.Content("Android");
+	 }
+	 else {
+		 xw.Content("Win32Proj");
+	 }
      xw.EndElement(); // Keyword
      xw.StartElement("Platform");
       xw.Content(this->GetPlatformName());
@@ -685,7 +690,15 @@ bool cmGlobalVisualStudio10Generator::FindVCTargetsPath(cmMakefile* mf)
        xw.StartElement("ApplicationTypeRevision");
         xw.Content(this->GetSystemVersion());
        xw.EndElement(); // ApplicationTypeRevision
-     }
+	 }
+	 else if (this->SystemIsAndroid) {
+		 xw.StartElement("ApplicationType");
+		 xw.Content("Android");
+		 xw.EndElement(); // ApplicationType
+		 xw.StartElement("ApplicationTypeRevision");
+		 xw.Content("2.0");
+		 xw.EndElement(); // ApplicationTypeRevision
+	 }
      if (!this->WindowsTargetPlatformVersion.empty()) {
        xw.StartElement("WindowsTargetPlatformVersion");
         xw.Content(this->WindowsTargetPlatformVersion);
