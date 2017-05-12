@@ -352,8 +352,15 @@ void cmVisualStudio10TargetGenerator::Generate()
 
   const char* vsGlobalKeyword =
     this->GeneratorTarget->GetProperty("VS_GLOBAL_KEYWORD");
-  if (!vsGlobalKeyword) {
-    this->WriteString("<Keyword>Win32Proj</Keyword>\n", 2);
+	if (!vsGlobalKeyword) {
+	  if (this->GlobalGenerator->TargetsAndroid())
+	  {
+	  	this->WriteString("<Keyword>Android</Keyword>\n", 2);
+	  }
+	  else
+	  {
+	  	this->WriteString("<Keyword>Win32Proj</Keyword>\n", 2);
+	  }
   } else {
     this->WriteString("<Keyword>", 2);
     (*this->BuildFileStream) << cmVS10EscapeXML(vsGlobalKeyword)
@@ -984,17 +991,25 @@ void cmVisualStudio10TargetGenerator::WriteMSToolConfigurationValues(
       "CMAKE_MFC_FLAG");
   std::string mfcFlagValue = mfcFlag ? mfcFlag : "0";
 
-  std::string useOfMfcValue = "false";
-  if (this->GeneratorTarget->GetType() <= cmStateEnums::OBJECT_LIBRARY) {
-    if (mfcFlagValue == "1") {
-      useOfMfcValue = "Static";
-    } else if (mfcFlagValue == "2") {
-      useOfMfcValue = "Dynamic";
-    }
+  if (this->GlobalGenerator->TargetsAndroid())
+  {
+    this->WriteString("<UseDebugLibraries>false</UseDebugLibraries>\n", 2);
+	this->WriteString("<UseOfStl>gnustl_shared</UseOfStl>\n", 2);
   }
-  std::string mfcLine = "<UseOfMfc>";
-  mfcLine += useOfMfcValue + "</UseOfMfc>\n";
-  this->WriteString(mfcLine.c_str(), 2);
+  else
+  {
+    std::string useOfMfcValue = "false";
+    if (this->GeneratorTarget->GetType() <= cmStateEnums::OBJECT_LIBRARY) {
+      if (mfcFlagValue == "1") {
+        useOfMfcValue = "Static";
+      } else if (mfcFlagValue == "2") {
+        useOfMfcValue = "Dynamic";
+      }
+    }
+    std::string mfcLine = "<UseOfMfc>";
+    mfcLine += useOfMfcValue + "</UseOfMfc>\n";
+    this->WriteString(mfcLine.c_str(), 2);
+  }
 
   if ((this->GeneratorTarget->GetType() <= cmStateEnums::OBJECT_LIBRARY &&
        this->ClOptions[config]->UsingUnicode()) ||
@@ -3710,6 +3725,7 @@ void cmVisualStudio10TargetGenerator::WriteApplicationTypeSettings()
   bool isAppContainer = false;
   bool const isWindowsPhone = this->GlobalGenerator->TargetsWindowsPhone();
   bool const isWindowsStore = this->GlobalGenerator->TargetsWindowsStore();
+  bool const isAndroid = this->GlobalGenerator->TargetsAndroid();
   std::string const& v = this->GlobalGenerator->GetSystemVersion();
   if (isWindowsPhone || isWindowsStore) {
     this->WriteString("<ApplicationType>", 2);
@@ -3766,14 +3782,24 @@ void cmVisualStudio10TargetGenerator::WriteApplicationTypeSettings()
       }
     }
   }
-  if (isAppContainer) {
-    this->WriteString("<AppContainerApplication>true"
-                      "</AppContainerApplication>\n",
-                      2);
-  } else if (this->Platform == "ARM") {
-    this->WriteString("<WindowsSDKDesktopARMSupport>true"
-                      "</WindowsSDKDesktopARMSupport>\n",
-                      2);
+  if (isAndroid) {
+    this->WriteString("<ApplicationType>Android"
+    	"</ApplicationType>\n", 2);
+    this->WriteString("<ApplicationTypeRevision>2.0"
+    	"</ApplicationTypeRevision>\n", 2);
+    this->WriteString("<MinimumVisualStudioVersion>14.0"
+    	"</MinimumVisualStudioVersion>\n", 2);
+  }
+  else {
+    if (isAppContainer) {
+      this->WriteString("<AppContainerApplication>true"
+                        "</AppContainerApplication>\n",
+                        2);
+    } else if (this->Platform == "ARM") {
+      this->WriteString("<WindowsSDKDesktopARMSupport>true"
+                        "</WindowsSDKDesktopARMSupport>\n",
+                        2);
+    }
   }
   std::string const& targetPlatformVersion =
     gg->GetWindowsTargetPlatformVersion();

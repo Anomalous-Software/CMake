@@ -139,6 +139,15 @@ bool cmGlobalVisualStudio14Generator::InitializeWindowsStore(cmMakefile* mf)
   return true;
 }
 
+bool cmGlobalVisualStudio14Generator::InitializeAndroid(cmMakefile* mf)
+{
+	this->DefaultPlatformName = "ARM";
+	this->DefaultPlatformToolset = "Clang_3_8";
+	this->SystemIsAndroid = true;
+	
+	return true;
+}
+
 bool cmGlobalVisualStudio14Generator::SelectWindows10SDK(cmMakefile* mf,
                                                          bool required)
 {

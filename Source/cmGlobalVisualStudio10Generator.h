@@ -77,6 +77,9 @@ public:
   /** Return true if building for WindowsPhone */
   bool TargetsWindowsPhone() const { return this->SystemIsWindowsPhone; }
 
+/** Return true if building for Android */
+bool TargetsAndroid() const { return this->SystemIsAndroid; }
+
   /** Return true if building for WindowsStore */
   bool TargetsWindowsStore() const { return this->SystemIsWindowsStore; }
 
@@ -112,6 +115,7 @@ protected:
   virtual bool InitializeWindowsCE(cmMakefile* mf);
   virtual bool InitializeWindowsPhone(cmMakefile* mf);
   virtual bool InitializeWindowsStore(cmMakefile* mf);
+  virtual bool InitializeAndroid(cmMakefile* mf);
 
   virtual bool ProcessGeneratorToolsetField(std::string const& key,
                                             std::string const& value);
@@ -144,6 +148,7 @@ protected:
   bool SystemIsWindowsCE;
   bool SystemIsWindowsPhone;
   bool SystemIsWindowsStore;
+  bool SystemIsAndroid;
 
 private:
   class Factory;
